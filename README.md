@@ -13,7 +13,7 @@ A tiny, dependency-free web app that checks a public website for HTTPS and commo
 ## Quick start
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/web-shield-check.git
+git clone https://github.com/gesti444/web-shield-check.git
 cd web-shield-check
 npm start
 ```
@@ -37,3 +37,4 @@ Issues, small improvements, new header rules, documentation, and accessibility f
 ## License
 
 [MIT](LICENSE)
+
