@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Web Shield Check</title>
+  <meta name="description" content="Quickly inspect a website's HTTPS and security headers.">
+  <style>
+    :root{color-scheme:dark;--bg:#07111f;--card:#101e30;--line:#27384c;--text:#eaf2ff;--muted:#91a4bb;--green:#41d394;--red:#ff6b75;--blue:#58a6ff}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#132944,var(--bg) 55%);font:16px/1.5 system-ui,sans-serif;color:var(--text);min-height:100vh}main{width:min(780px,92%);margin:0 auto;padding:64px 0}header{text-align:center;margin-bottom:32px}.logo{font-size:42px}h1{font-size:clamp(32px,7vw,56px);margin:8px 0}.tag{color:var(--muted);font-size:18px}.panel,.result{background:color-mix(in srgb,var(--card) 92%,transparent);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 20px 60px #0005}form{display:flex;gap:10px}input{flex:1;min-width:0;background:#07111f;border:1px solid var(--line);border-radius:10px;padding:14px;color:var(--text);font-size:16px}button{background:var(--blue);border:0;border-radius:10px;padding:0 22px;font-weight:700;color:#061120;cursor:pointer}button:disabled{opacity:.6}.hint{font-size:13px;color:var(--muted);margin:10px 2px 0}.result{margin-top:18px;display:none}.summary{display:flex;align-items:center;justify-content:space-between;gap:20px}.score{font-size:40px;font-weight:800}.checks{margin-top:18px;display:grid;gap:10px}.check{display:grid;grid-template-columns:28px 1fr;gap:8px;padding:13px;border:1px solid var(--line);border-radius:10px}.pass{color:var(--green)}.fail{color:var(--red)}.check small{display:block;color:var(--muted)}.error{color:var(--red)}footer{text-align:center;color:var(--muted);margin-top:26px;font-size:13px}@media(max-width:540px){form{flex-direction:column}button{padding:14px}.summary{align-items:flex-start;flex-direction:column}}
+  </style>
+</head>
+<body><main><header><div class="logo">🛡️</div><h1>Web Shield Check</h1><div class="tag">A fast, open-source security header check.</div></header>
+  <section class="panel"><form id="form"><input id="url" type="text" placeholder="example.com" aria-label="Website URL" required><button>Check website</button></form><p class="hint">Only scan websites you own or have permission to test. No data is stored.</p></section>
+  <section class="result" id="result" aria-live="polite"></section>
+  <footer>Open source · MIT licensed · Built for defenders</footer></main>
+<script>
+const form=document.querySelector('#form'),result=document.querySelector('#result'),button=form.querySelector('button');
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+form.addEventListener('submit',async e=>{e.preventDefault();button.disabled=true;button.textContent='Checking…';result.style.display='block';result.innerHTML='<p>Inspecting the site…</p>';try{const r=await fetch('/api/check',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({url:document.querySelector('#url').value})});const d=await r.json();if(!r.ok)throw new Error(d.error);result.innerHTML=`<div class="summary"><div><strong>${esc(d.finalUrl)}</strong><div class="hint">HTTP ${d.status} · ${d.responseTimeMs} ms</div></div><div class="score">${d.score}/100</div></div><div class="checks">${d.checks.map(c=>`<div class="check"><b class="${c.passed?'pass':'fail'}">${c.passed?'✓':'×'}</b><div><strong>${esc(c.name)}</strong><small>${esc(c.value||c.description)}</small></div></div>`).join('')}</div>`}catch(err){result.innerHTML=`<p class="error"><strong>Could not check this website.</strong><br>${esc(err.message)}</p>`}finally{button.disabled=false;button.textContent='Check website'}});
+</script></body></html>
