@@ -1,0 +1,13 @@
+{
+  "name": "web-shield-check",
+  "version": "1.0.0",
+  "description": "A tiny, dependency-free website security header and TLS checker.",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test"
+  },
+  "engines": { "node": ">=20" },
+  "keywords": ["security", "headers", "tls", "scanner", "cybersecurity"],
+  "license": "MIT"
+}
